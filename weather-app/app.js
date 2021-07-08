@@ -19,14 +19,20 @@ const weatherstackUrl =
     unitsParameter;
 
 request({ url: weatherstackUrl, json: true }, (error, response) => {
-    console.log(
-        response.body.current.weather_descriptions[0] +
-            ". It is currently " +
-            response.body.current.temperature +
-            " degrees out. It feels like " +
-            response.body.current.feelslike +
-            " degrees out."
-    );
+    if (error) {
+        console.log("Unable to connect to the weather service!");
+    } else if (response.body.error) {
+        console.log("Unable to find location!");
+    } else {
+        console.log(
+            response.body.current.weather_descriptions[0] +
+                ". It is currently " +
+                response.body.current.temperature +
+                " degrees out. It feels like " +
+                response.body.current.feelslike +
+                " degrees out."
+        );
+    }
 });
 
 const mapboxKey = getAPIAccessKey("mapbox");
@@ -36,6 +42,12 @@ const mapboxUrl =
     "&limit=1";
 
 request({ url: mapboxUrl, json: true }, (error, response) => {
-    console.log(`Latitude: ${response.body.features[0].center[1]}`);
-    console.log(`Longitude: ${response.body.features[0].center[0]}`);
+    if (error) {
+        console.log("Unable to connect to the geocoding service!");
+    } else if (response.body.features.length === 0) {
+        console.log("Unable to find location!");
+    } else {
+        console.log(`Latitude: ${response.body.features[0].center[1]}`);
+        console.log(`Longitude: ${response.body.features[0].center[0]}`);
+    }
 });
