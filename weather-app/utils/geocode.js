@@ -1,23 +1,23 @@
 const request = require("postman-request");
 const keys = require("./keys");
 
-const geocode = (address, callback) => {
-    const mapboxUrl =
+const geocode = (location, callback) => {
+    const url =
         "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-        encodeURIComponent(address) +
+        encodeURIComponent(location) +
         ".json?access_token=" +
         keys.mapbox +
         "&limit=1";
-    request({ url: mapboxUrl, json: true }, (error, response) => {
+    request({ url, json: true }, (error, { body: responseBody } = {}) => {
         if (error) {
             callback("Unable to connect to the geocoding service!", undefined);
-        } else if (response.body.features.length === 0) {
+        } else if (responseBody.features.length === 0) {
             callback("Unable to find location! Try another search.", undefined);
         } else {
             callback(undefined, {
-                latitude: response.body.features[0].center[1],
-                longitude: response.body.features[0].center[0],
-                location: response.body.features[0].place_name,
+                latitude: responseBody.features[0].center[1],
+                longitude: responseBody.features[0].center[0],
+                mapboxLocation: responseBody.features[0].place_name,
             });
         }
     });
