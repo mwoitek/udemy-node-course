@@ -40,9 +40,16 @@ app.get('/help', (req, res) => {
 });
 
 app.get('/weather', (req, res) => {
+  if (!req.query.address) {
+    return res.send({
+      error: 'You must provide an address.',
+    });
+  }
+
   res.send({
     location: 'Curitiba, Paraná, Brazil',
     forecast: 'Clear. It is currently 18 degrees out. It feels like 18 degrees out.',
+    address: req.query.address,
   });
 });
 
